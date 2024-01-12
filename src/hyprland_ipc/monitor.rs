@@ -5,11 +5,11 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ActiveWorkspace {
-    pub id: u64,
+    pub id: u128,
     pub name: String,
 }
 
-pub fn get_by_id(id: i16) -> Monitor {
+pub fn get_by_id(id: i128) -> Monitor {
     let mut monitors = get();
     monitors.find(|m| m.id == id).unwrap()
 }
