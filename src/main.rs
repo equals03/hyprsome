@@ -3,7 +3,7 @@ use clap::{Parser, Subcommand, ValueEnum};
 mod hyprland_ipc;
 use hyprland::{
     data::{Client, Monitor, Transforms},
-    dispatch::{Direction, Dispatch, DispatchType, WorkspaceIdentifier, MonitorIdentifier}
+    dispatch::{Direction, Dispatch, DispatchType, MonitorIdentifier, WorkspaceIdentifier},
 };
 use hyprland_ipc::{client, monitor, option, workspace};
 
@@ -20,9 +20,9 @@ struct Cli {
 #[derive(Subcommand)]
 enum Commands {
     Focus { direction: Directions },
-    Workspace { workspace_number: u64 },
-    Move { workspace_number: u64 },
-    Movefocus { workspace_number: u64 },
+    Workspace { workspace_number: i32 },
+    Move { workspace_number: i32 },
+    Movefocus { workspace_number: i32 },
     Bindworkspaces,
 }
 
@@ -78,20 +78,23 @@ pub fn bind_workspaces() {
         for i in 1..=9 {
             let workspace_number = i + (monitor_id * 10);
             // move the workspace to the correct monitor
-            let _ = Dispatch::call(DispatchType::MoveWorkspaceToMonitor(WorkspaceIdentifier::Id(workspace_number as i32), MonitorIdentifier::Id(monitor_id as u8)));
+            let _ = Dispatch::call(DispatchType::MoveWorkspaceToMonitor(
+                WorkspaceIdentifier::Id(workspace_number as i32),
+                MonitorIdentifier::Id(monitor_id as u8),
+            ));
         }
     })
 }
 
 //TODO: refactor this nonsense
-pub fn select_workspace(workspace_number: &u64) {
+pub fn select_workspace(workspace_number: &i32) {
     let mon = get_current_monitor();
     match mon.id {
         0 => workspace::focus(workspace_number),
         _ => {
             workspace::focus(
                 &format!("{}{}", mon.id, workspace_number)
-                    .parse::<u64>()
+                    .parse::<i32>()
                     .unwrap(),
             );
         }
@@ -99,14 +102,16 @@ pub fn select_workspace(workspace_number: &u64) {
 }
 
 //TODO: refactor this nonsense
-pub fn send_to_workspace(workspace_number: &u64) {
+pub fn send_to_workspace(workspace_number: &i32) {
     let mon = get_current_monitor();
     match mon.id {
-        0 => workspace::move_to(workspace_number),
+        0 => {
+            workspace::move_to(workspace_number);
+        }
         _ => {
             workspace::move_to(
                 &format!("{}{}", mon.id, workspace_number)
-                    .parse::<u64>()
+                    .parse::<i32>()
                     .unwrap(),
             );
         }
@@ -114,14 +119,14 @@ pub fn send_to_workspace(workspace_number: &u64) {
 }
 
 //TODO: refactor this nonsense
-pub fn movefocus(workspace_number: &u64) {
+pub fn movefocus(workspace_number: &i32) {
     let mon = get_current_monitor();
     match mon.id {
         0 => workspace::move_focus(workspace_number),
         _ => {
             workspace::move_focus(
                 &format!("{}{}", mon.id, workspace_number)
-                    .parse::<u64>()
+                    .parse::<i32>()
                     .unwrap(),
             );
         }
@@ -331,6 +336,6 @@ fn main() {
         }
         Commands::Bindworkspaces => {
             bind_workspaces();
-        },
+        }
     }
 }

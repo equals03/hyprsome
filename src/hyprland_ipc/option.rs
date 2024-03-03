@@ -1,19 +1,15 @@
-use serde::{Deserialize, Serialize};
+use hyprland::keyword::{Keyword, OptionValue};
 
-const GETOPTIONS: &str = "getoptions";
 const GENERAL_GAPS_OUT: &str = "general:gaps_out";
 
-#[derive(Serialize, Deserialize, Debug)]
-pub struct HyprlandOption {
-    pub option: String,
-    pub int: i32,
-    pub float: f64,
-    pub str: String,
-}
-
 pub fn get_gaps() -> i16 {
-    let response = super::send_message(GETOPTIONS, vec![GENERAL_GAPS_OUT]);
-    let gap_option: HyprlandOption = serde_json::from_str(&response).unwrap();
+    let gaps_out = match Keyword::get(GENERAL_GAPS_OUT) {
+        Ok(gaps_out_option) => match gaps_out_option.value {
+            OptionValue::Int(i) => i,
+            _ => panic!("gaps_out can only be an int"),
+        },
+        _ => 0,
+    };
 
-    gap_option.int as i16
+    gaps_out as i16
 }

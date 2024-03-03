@@ -1,13 +1,6 @@
 use hyprland::data::{Monitor, Monitors};
 use hyprland::dispatch::*;
 use hyprland::shared::HyprData;
-use serde::{Deserialize, Serialize};
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct ActiveWorkspace {
-    pub id: u128,
-    pub name: String,
-}
 
 pub fn get_by_id(id: i128) -> Monitor {
     let mut monitors = get();
