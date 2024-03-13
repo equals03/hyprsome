@@ -5,12 +5,25 @@ use crate::{
 use anyhow::Result;
 
 pub fn init_workspaces(workspace_index: i32) -> Result<()> {
+    let active = monitor::get_active()?;
+
     for monitor in monitor::get_monitors()? {
         let monitor_id = monitor.id as i32;
         let workspace_id = (monitor_id + 1) * MAX_GROUP_WS + workspace_index;
 
-        monitor::focus(monitor_id as u8)?;
-        workspace::switch_to(workspace_id)?;
+        if let Some(found) = workspace::get_by_id(workspace_id)? {
+            if found.monitor != monitor.name {
+                workspace::move_to_monitor(workspace_id, monitor_id as u8)?;
+                continue;
+            }
+        } else {
+            monitor::focus(monitor_id as u8)?;
+            workspace::switch_to(workspace_id)?;
+        }
+    }
+
+    if let Some(active) = active {
+        monitor::focus(active.id as u8)?;
     }
 
     Ok(())
