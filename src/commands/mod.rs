@@ -89,7 +89,7 @@ pub fn move_to_workspace(workspace_index: i32, silent: bool) -> Result<()> {
     Ok(())
 }
 
-pub fn move_current_workspace_to_monitor(monitor_index: i32, silent: bool) -> Result<()> {
+pub fn move_current_workspace_to_monitor(monitor_index: i32, _silent: bool) -> Result<()> {
     if let Some(target_monitor) = monitor::get_by_id(monitor_index)? {
         let target_monitor_id = target_monitor.id as i32;
 

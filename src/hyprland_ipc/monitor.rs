@@ -1,5 +1,5 @@
 use super::option;
-use anyhow::{Context, Result};
+use anyhow::Result;
 use hyprland::data::{Client, Clients, Monitor, Monitors, Transforms};
 use hyprland::dispatch::*;
 use hyprland::prelude::*;
@@ -199,11 +199,13 @@ pub fn get_by_name(name: &str) -> Result<Option<Monitor>> {
     Ok(Monitors::get()?.into_iter().find(|m| m.name == name))
 }
 pub fn get_count() -> Result<i32> {
-    Ok(Monitors::get()?.count() as i32)
+    Ok(Monitors::get()?.to_vec().len() as i32)
 }
 
 pub fn focus(id: u8) -> Result<()> {
-    Dispatch::call(DispatchType::FocusMonitor(MonitorIdentifier::Id(id)))?;
+    Dispatch::call(DispatchType::FocusMonitor(MonitorIdentifier::Id(
+        id as i128,
+    )))?;
 
     Ok(())
 }

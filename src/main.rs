@@ -6,7 +6,7 @@ use clap::{Args, Parser, Subcommand};
 mod commands;
 mod hyprland_ipc;
 
-use hyprland_ipc::{client, workspace};
+
 
 pub const MAX_GROUP_WS: i32 = 10;
 

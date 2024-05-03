@@ -1,6 +1,6 @@
 use anyhow::{Context, Result};
 use hyprland::{
-    data::{Client, Monitors, Workspace, Workspaces},
+    data::{Client, Workspace, Workspaces},
     dispatch::{
         Dispatch, DispatchType, MonitorIdentifier, WorkspaceIdentifier,
         WorkspaceIdentifierWithSpecial,
@@ -48,7 +48,7 @@ pub fn switch_to(workspace_id: i32) -> Result<()> {
 pub fn move_to_monitor(workspace_id: i32, monitor_id: u8) -> Result<()> {
     Dispatch::call(DispatchType::MoveWorkspaceToMonitor(
         WorkspaceIdentifier::Id(workspace_id),
-        MonitorIdentifier::Id(monitor_id),
+        MonitorIdentifier::Id(monitor_id as i128),
     )).with_context(|| format!("failure when trying to dispatch move workspace to monitor [workspace_id: {}, monitor_id: {}]", workspace_id, monitor_id))?;
 
     Ok(())
