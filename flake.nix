@@ -16,10 +16,12 @@
     flake-utils.lib.eachDefaultSystem (system: let
       pkgs = nixpkgs.legacyPackages.${system};
       craneLib = crane.lib.${system};
-    in {
-      packages.default = craneLib.buildPackage {
+    in rec {
+      packages.default = packages.hyprsome;
+      packages.hyprsome = craneLib.buildPackage {
         src = craneLib.cleanCargoSource (craneLib.path ./.);
       };
+
       devShells.default = craneLib.devShell {
         packages = with pkgs; [
           rustfmt
